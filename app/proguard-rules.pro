@@ -1,0 +1,2 @@
+-keep class com.cookbook.app.data.local.entities.** { *; }
+-keep class com.cookbook.app.model.** { *; }
