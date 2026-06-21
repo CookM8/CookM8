@@ -1,95 +1,63 @@
-# Cookbook App — Android (Jetpack Compose + MVVM + Room)
+# CookM8
 
-Pełnoprawna aplikacja mobilna na Androida zbudowana zgodnie z wymaganiami projektowymi.
-
----
-
-## ✅ Spełnione wymagania
-
-| Wymaganie | Realizacja |
-|-----------|-----------|
-| **Platforma Android** | `minSdk 26`, `targetSdk 35` |
-| **Architektura MVVM** | `HomeViewModel`, `RecipeListViewModel`, `RecipeDetailViewModel`, `FavoritesViewModel`, `AddRecipeViewModel` — każdy z `UiState` + `StateFlow` |
-| **Jetpack Compose UI** | 100% deklaratywne UI, Material3, `NavigationBar`, animacje |
-| **Room (baza danych)** | `RecipeEntity`, `CategoryEntity`, `RecipeDao`, `CategoryDao`, `CookbookDatabase` |
-| **≥ 15 zdjęć/obrazów** | 15+ unikalnych URL zdjęć w `seedRecipes` (Unsplash); pager obrazów na ekranie szczegółów |
-| **≥ 1 film/video** | `videoUrl` w pierwszym przepisie → odtwarzacz ExoPlayer w `RecipeDetailScreen` |
-| **≥ 1 plik audio** | `audioUrl` w pierwszym przepisie → `AudioPlayerBar` z ExoPlayer |
-| **Animacje** | Wiele: animowany przycisk ulubione (spring scale), pager dots, staggered list enter, shimmer loading, pulse na audio, AnimatedContent, AnimatedVisibility, slideIn/Out transitions nawigacji |
+Aplikacja kulinarna na Androida zbudowana w Jetpack Compose, MVVM i Room.
 
 ---
 
-## 🏗️ Struktura projektu
+## Funkcje
 
-```
-CookbookApp/
-├── app/src/main/java/com/cookbook/app/
-│   ├── data/
-│   │   ├── local/
-│   │   │   ├── CookbookDatabase.kt          ← Room DB
-│   │   │   ├── dao/RecipeDao.kt
-│   │   │   ├── dao/CategoryDao.kt
-│   │   │   └── entities/RecipeEntity.kt
-│   │   └── repository/RecipeRepository.kt   ← single source of truth
-│   ├── di/DatabaseModule.kt                 ← Hilt DI
-│   ├── model/Models.kt                      ← domain models + routes
-│   ├── ui/
-│   │   ├── Navigation.kt                    ← NavHost + BottomNav
-│   │   ├── components/Components.kt         ← shared Composables
-│   │   ├── theme/Theme.kt
-│   │   └── screens/
-│   │       ├── home/HomeScreen.kt
-│   │       ├── recipelist/RecipeListScreen.kt
-│   │       ├── recipedetail/RecipeDetailScreen.kt
-│   │       ├── favorites/FavoritesScreen.kt
-│   │       ├── addrecipe/AddRecipeScreen.kt
-│   │       └── ingredients/IngredientsScreen.kt
-│   └── viewmodel/
-│       ├── HomeViewModel.kt
-│       ├── RecipeListViewModel.kt
-│       ├── RecipeDetailViewModel.kt
-│       └── FavoritesAndAddViewModel.kt
-├── CookbookApplication.kt
-└── MainActivity.kt
-```
+- **Przeglądanie po kategoriach** — siatka 2-kolumnowa kategorii z okładkami
+- **Wyszukiwanie na żywo** — wyszukiwanie przepisów z debounce podczas pisania
+- **Szczegóły przepisu** — galeria zdjęć do przesuwania, instrukcje krok po kroku, czas gotowania, porcje i ocena gwiazdkowa
+- **Odtwarzacz wideo** — wbudowany ExoPlayer do filmów z przepisem
+- **Odtwarzacz audio** — pasek z narracją audio z odtwarzaniem/pauzą/przewijaniem
+- **Ekran składników** — lista z checkboxami i kopiowaniem do schowka jednym kliknięciem
+- **Ulubione** — zapisywanie i zarządzanie ulubionymi przepisami
+- **Dodaj przepis** — formularz do tworzenia przepisu ze zdjęciami i filmem z galerii
+- **Import z aniagotuje.pl** — wklej link do przepisu, a formularz wypełni się automatycznie
 
 ---
 
-## 🚀 Uruchomienie
+## Ekrany
 
-### Wymagania
-- **Android Studio** Ladybug (2024.2+) lub nowszy
-- **JDK 17**
-- Urządzenie/emulator z API 26+
+| Ekran | Opis |
+|---|---|
+| Strona główna | Siatka kategorii + wyszukiwanie przepisów |
+| Lista przepisów | Wszystkie przepisy w wybranej kategorii |
+| Szczegóły przepisu | Galeria, wideo, audio, instrukcje, dodawanie do ulubionych |
+| Składniki | Lista składników z możliwością odhaczania i kopiowania |
+| Ulubione | Zapisane przepisy |
+| Dodaj przepis | Tworzenie przepisu ręcznie lub import z aniagotuje.pl |
 
-### Kroki
-1. Otwórz folder `CookbookApp/` w Android Studio jako projekt
+---
+
+## Stos technologiczny
+
+| Warstwa | Technologia |
+|---|---|
+| UI | Jetpack Compose + Material 3 |
+| Architektura | MVVM — `ViewModel` + `StateFlow` |
+| Nawigacja | Navigation Compose z animacjami przejść |
+| Baza danych | Room (lokalny SQLite) |
+| Dependency Injection | Hilt |
+| Ładowanie obrazów | Coil |
+| Wideo / Audio | Media3 ExoPlayer |
+| Parsowanie HTML | Jsoup (do importu przepisów) |
+
+---
+
+## Uruchomienie
+
+**Wymagania:** Android Studio Ladybug (2024.2+), JDK 17, urządzenie lub emulator z API 26+
+
+1. Sklonuj repozytorium i otwórz folder `CookM8/` w Android Studio
 2. Poczekaj na synchronizację Gradle
-3. Uruchom `Run ▶` na urządzeniu lub emulatorze Android
+3. Uruchom **Run** na podłączonym urządzeniu lub emulatorze
 
-> Pierwsze uruchomienie automatycznie zasila bazę danych przykładowymi przepisami (seed data).
-
----
-
-## 📦 Zależności (kluczowe)
-
-| Biblioteka | Wersja | Cel |
-|-----------|--------|-----|
-| Jetpack Compose BOM | 2024.09.03 | UI |
-| Material3 | via BOM | Komponenty |
-| Navigation Compose | 2.8.2 | Nawigacja |
-| Hilt | 2.52 | Dependency Injection |
-| Room | 2.6.1 | Lokalna baza danych |
-| Coil | 2.7.0 | Ładowanie obrazów |
-| Media3 ExoPlayer | 1.4.1 | Video + Audio |
+Baza danych uzupełnia się przykładowymi przepisami przy pierwszym uruchomieniu — żadna konfiguracja nie jest wymagana.
 
 ---
 
-## 🎨 Ekrany
+## Import przepisów
 
-1. **Home** — siatka kategorii 2×N z wyszukiwaniem live
-2. **Recipe List** — lista przepisów w kategorii z kartami
-3. **Recipe Detail** — galeria obrazów (HorizontalPager), odtwarzacz wideo, audio, instrukcje krok po kroku
-4. **Favorites** — ulubione przepisy / stan pusty z animacją
-5. **Add Recipe** — formularz dodawania nowego przepisu
-6. **Ingredients** — lista składników z checkboxami i kopiowaniem do schowka
+Na ekranie **Dodaj przepis** wklej dowolny link `aniagotuje.pl/przepis/…` i naciśnij **Importuj przepis**. Aplikacja pobiera stronę, parsuje tytuł, opis, składniki, instrukcje krok po kroku, czas gotowania, porcje i zdjęcia, a następnie wypełnia formularz automatycznie. Możesz wszystko przejrzeć i edytować przed zapisaniem.

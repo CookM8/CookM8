@@ -1,0 +1,14 @@
+# Claude Code
+CLAUDE.md
+
+# Gradle
+.gradle/
+build/
+local.properties
+
+# IDE
+.idea/
+
+# Android
+*.apk
+*.aab

@@ -14,6 +14,7 @@ coil = "2.7.0"
 gson = "2.11.0"
 accompanistPermissions = "0.36.0"
 media3 = "1.4.1"
+jsoup = "1.18.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -39,6 +40,7 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermissions" }
 media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
 media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3" }
+jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

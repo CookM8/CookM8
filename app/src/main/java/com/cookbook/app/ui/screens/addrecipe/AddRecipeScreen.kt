@@ -22,7 +22,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.cookbook.app.ui.theme.OrangeAccent
@@ -74,6 +76,15 @@ fun AddRecipeScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // ─── Import from aniagotuje.pl ────────────────────────────────
+            ImportRecipeCard(
+                url = state.importUrl,
+                isImporting = state.isImporting,
+                importError = state.importError,
+                onUrlChange = viewModel::onImportUrlChange,
+                onImport = viewModel::importFromUrl
+            )
+
             // Title
             OutlinedTextField(
                 value = state.title,
@@ -287,6 +298,92 @@ fun AddRecipeScreen(
             }
 
             Spacer(Modifier.height(16.dp))
+        }
+    }
+}
+
+@Composable
+private fun ImportRecipeCard(
+    url: String,
+    isImporting: Boolean,
+    importError: String?,
+    onUrlChange: (String) -> Unit,
+    onImport: () -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3E0)),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    Icons.Filled.Download,
+                    contentDescription = null,
+                    tint = OrangeAccent,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    "Import from aniagotuje.pl",
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 15.sp,
+                    color = OrangeAccent
+                )
+            }
+
+            OutlinedTextField(
+                value = url,
+                onValueChange = onUrlChange,
+                placeholder = { Text("https://aniagotuje.pl/przepis/…", fontSize = 13.sp) },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                singleLine = true,
+                enabled = !isImporting,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = OrangeAccent,
+                    unfocusedBorderColor = Color(0xFFFFB74D)
+                )
+            )
+
+            AnimatedVisibility(visible = importError != null) {
+                importError?.let {
+                    Text(it, color = MaterialTheme.colorScheme.error, fontSize = 13.sp)
+                }
+            }
+
+            Button(
+                onClick = onImport,
+                enabled = !isImporting && url.isNotBlank(),
+                modifier = Modifier.fillMaxWidth().height(44.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = OrangeAccent),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                if (isImporting) {
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text("Importing…", color = Color.White)
+                } else {
+                    Icon(Icons.Filled.Download, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text("Import Recipe", fontWeight = FontWeight.SemiBold)
+                }
+            }
+
+            Text(
+                "Paste a recipe link and the form will be filled in automatically.",
+                fontSize = 11.sp,
+                color = Color.Gray,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }

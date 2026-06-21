@@ -78,5 +78,8 @@ dependencies {
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.ui)
 
+    // HTML parsing for recipe import
+    implementation(libs.jsoup)
+
     debugImplementation(libs.androidx.ui.tooling)
 }

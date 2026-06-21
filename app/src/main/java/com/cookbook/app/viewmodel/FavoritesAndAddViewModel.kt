@@ -5,6 +5,7 @@ import android.net.Uri
 import android.webkit.MimeTypeMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cookbook.app.data.remote.AniaGotujeParser
 import com.cookbook.app.data.repository.RecipeRepository
 import com.cookbook.app.model.Recipe
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -58,7 +59,11 @@ data class AddRecipeUiState(
     val videoUri: String? = null,
     val isSaving: Boolean = false,
     val savedSuccessfully: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    // Import from aniagotuje.pl
+    val importUrl: String = "",
+    val isImporting: Boolean = false,
+    val importError: String? = null
 )
 
 @HiltViewModel
@@ -66,6 +71,8 @@ class AddRecipeViewModel @Inject constructor(
     private val repository: RecipeRepository,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
+
+    private val parser = AniaGotujeParser()
 
     private val _uiState = MutableStateFlow(AddRecipeUiState())
     val uiState: StateFlow<AddRecipeUiState> = _uiState.asStateFlow()
@@ -77,6 +84,42 @@ class AddRecipeViewModel @Inject constructor(
     fun onDescriptionChange(v: String) = _uiState.update { it.copy(description = v) }
     fun onIngredientsChange(v: String) = _uiState.update { it.copy(ingredientsText = v) }
     fun onInstructionsChange(v: String)= _uiState.update { it.copy(instructionsText = v) }
+
+    // ─── Import from aniagotuje.pl ────────────────────────────────────────────
+
+    fun onImportUrlChange(v: String) =
+        _uiState.update { it.copy(importUrl = v, importError = null) }
+
+    fun importFromUrl() {
+        val url = _uiState.value.importUrl.trim()
+        if (!parser.isValidUrl(url)) {
+            _uiState.update { it.copy(importError = "Paste a valid aniagotuje.pl/przepis/… link") }
+            return
+        }
+        viewModelScope.launch {
+            _uiState.update { it.copy(isImporting = true, importError = null) }
+            try {
+                val parsed = withContext(Dispatchers.IO) { parser.parse(url) }
+                _uiState.update {
+                    it.copy(
+                        isImporting = false,
+                        title = parsed.title,
+                        description = parsed.description,
+                        category = parsed.category,
+                        cookingTime = parsed.cookingTimeMinutes.toString(),
+                        servings = parsed.servings.toString(),
+                        ingredientsText = parsed.ingredients.joinToString("\n"),
+                        instructionsText = parsed.instructions.joinToString("\n"),
+                        imageUris = parsed.imageUrls
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isImporting = false, importError = "Import failed: ${e.message}")
+                }
+            }
+        }
+    }
 
     // ─── Media z galerii ──────────────────────────────────────────────────────
 
