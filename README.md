@@ -2,6 +2,10 @@
 
 Aplikacja kulinarna na Androida zbudowana w Jetpack Compose, MVVM i Room.
 
+![Makiety ekranów aplikacji](.github/images/mockups.png)
+
+![Schemat bazy danych](.github/images/schema.png)
+
 ---
 
 ## Funkcje
