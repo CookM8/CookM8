@@ -8,6 +8,16 @@ Aplikacja kulinarna na Androida zbudowana w Jetpack Compose, MVVM i Room.
 
 ---
 
+## View Model
+
+Aplikacja działa w oparciu o kilka wyspecjalizowanych view modeli:
+
+HomeViewModel — zarządza ekranem głównym: ładuje listę kategorii z bazy danych i obsługuje wyszukiwarkę przepisów wykorzystującą optymalizacje debounce, by nie wysyłać zapytania po każdej wciśniętej literze.
+RecipeListViewModel — pobiera i wyświetla listę przepisów dla wybranej kategorii, którą odczytuje automatycznie z parametrów nawigacji. Pozwala też na dodawanie i usuwanie przepisów z ulubionych.
+RecipeDetailViewModel — obsługuje ekran szczegółów przepisu: ładuje pełne dane po ID, zarządza aktywnym zdjęciem w galerii oraz przełączaniem statusu ulubionego. Reużywany również przez ekran składników, żeby nie pobierać tych samych danych dwa razy.
+FavoritesViewModel — obserwuje listę ulubionych przepisów w bazie danych i automatycznie odświeża ekran, gdy cokolwiek się zmieni. Udostępnia metodę usuwania przepisu z ulubionych.
+AddRecipeViewModel — przechowuje stan całego formularza dodawania przepisu, obsługuje wybór zdjęć i wideo z galerii systemowej (bez żądania uprawnień), kopiuje je do pamięci wewnętrznej aplikacji tak by były dostępne po restarcie, a po zatwierdzeniu waliduje dane i zapisuje nowy przepis do bazy Room.
+
 ## Funkcje
 
 - **Przeglądanie po kategoriach** — siatka 2-kolumnowa kategorii z okładkami
